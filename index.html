@@ -125,7 +125,7 @@
 <main>
   <header>
     <h1>Quiz: energia w domu</h1>
-    <p class="lead">Taryfa, bateria, samochody i ciepła woda. Sprawdź, czy wiesz, co robi automatyka i dlaczego.</p>
+    <p class="lead">Taryfa, bateria, samochody i ciepła woda. 10 pytań losowanych z bazy 60, przy każdym podejściu inne.</p>
   </header>
 
   <section class="card" id="quiz" aria-live="polite">
@@ -173,7 +173,7 @@ const QUESTIONS = [
   {
     topic: "Instalacja",
     q: "Falownik „celuje w zero na liczniku”. Co to znaczy?",
-    a: ["Zasila dom słońcem i baterią tak, żeby z sieci brać tylko brakującą resztę", "Wyłącza zasilanie domu w drogich godzinach, żeby licznik stał", "Sprzedaje do sieci wszystko, co wyprodukują panele", "Rozładowuje baterię do zera przed każdym tanim oknem"],
+    a: ["Zasila dom słońcem i baterią, a z sieci bierze tylko resztę", "Wyłącza zasilanie domu w drogich godzinach, żeby licznik stał", "Sprzedaje do sieci wszystko, co wyprodukują panele", "Rozładowuje baterię do zera przed każdym tanim oknem"],
     why: "Falownik na bieżąco dobiera moc z paneli i baterii tak, żeby licznik sieci stał w miejscu. Z sieci płynie tylko to, czego zabraknie."
   },
   {
@@ -257,7 +257,7 @@ const QUESTIONS = [
   {
     topic: "Strażnik baterii",
     q: "Dlaczego w drogiej strefie auto może brać prąd z baterii?",
-    a: ["Bo i tak kupilibyśmy brakującą energię po tej samej, drogiej cenie", "Bo w drogiej strefie bateria jest zawsze pełna", "Bo w dzień strażnik nie widzi ładowanego auta", "Bo auto ma pierwszeństwo przed domem przez całą dobę"],
+    a: ["Bo brakującą energię i tak kupimy po tej samej cenie", "Bo w drogiej strefie bateria jest zawsze pełna", "Bo w dzień strażnik nie widzi ładowanego auta", "Bo auto ma pierwszeństwo przed domem przez całą dobę"],
     why: "Gdy auto zużyje baterię wieczorem, dom dokupi brak po 1,30 zł. Bez auta dom kupiłby wtedy tyle samo, więc koszt się nie zmienia, a niewykorzystana energia z baterii byłaby warta mniej po 22:00."
   },
   {
@@ -281,12 +281,240 @@ const QUESTIONS = [
   {
     topic: "Gdy coś nie działa",
     q: "Komputer sterujący przestał działać. Na co trzeba uważać do czasu naprawy?",
-    a: ["Nie włączać naraz ładowania auta i dużych odbiorników", "Nie otwierać lodówki, żeby nie zużywać prądu", "Nie korzystać z ciepłej wody do rana", "Na nic, wszystko działa dokładnie jak zwykle"],
+    a: ["Nie włączać naraz ładowania auta i dużych odbiorników", "Nie otwierać lodówki, żeby nie zużywać zapasu prądu", "Nie korzystać z ciepłej wody aż do następnego rana", "Na nic, wszystko działa dokładnie jak zwykle"],
     why: "Dom ma prąd jak zwykle, ale nikt nie pilnuje bezpiecznika przy ładowaniu auta. Ładowanie razem z piekarnikiem czy czajnikiem może go wybić."
+  },
+  {
+    topic: "Taryfa",
+    q: "Kiedy w weekend prąd jest w drogiej strefie?",
+    a: ["Nigdy, w weekend cała doba jest tania", "W sobotę 06–13, w niedzielę cały dzień", "Tak samo jak w dni robocze", "Tylko w niedzielę wieczorem"],
+    why: "W taryfie G12w soboty i niedziele są tanie przez całą dobę."
+  },
+  {
+    topic: "Taryfa",
+    q: "Czy święto, np. 11 listopada w środę, jest tanie?",
+    a: ["Tak, cała doba jest tania jak w weekend", "Nie, święto liczy się jak dzień roboczy", "Tylko w nocy, od 22:00", "Tylko wtedy, gdy wypada w weekend"],
+    why: "Święta ustawowe są w G12w tanie przez całą dobę, niezależnie od dnia tygodnia. Automatyka zna polskie święta."
+  },
+  {
+    topic: "Taryfa",
+    q: "Od czego zależy cena, którą dostajemy za prąd sprzedany do sieci?",
+    a: ["Od miesięcznej ceny rynkowej RCEm", "Od pory dnia, tak jak cena zakupu", "Jest stała przez cały rok", "Od tego, ile prądu kupiliśmy w miesiącu"],
+    why: "Cenę sprzedaży wyznacza RCEm, miesięczna rynkowa cena energii. Automatyka pobiera ją co miesiąc."
+  },
+  {
+    topic: "Taryfa",
+    q: "Ile energii tracimy, gdy ładujemy baterię z sieci, a potem ją z niej oddajemy?",
+    a: ["Około 17 %", "Nic, bateria oddaje 100 %", "Około połowy", "Około 2 %"],
+    why: "Część energii zamienia się w ciepło przy ładowaniu i rozładowaniu. Dlatego ładowanie z sieci opłaca się tylko przy dużej różnicy cen."
+  },
+  {
+    topic: "Taryfa",
+    q: "Kiedy ładowanie baterii z sieci ma sens?",
+    a: ["Gdy tani prąd zastąpi potem zakup w drogiej strefie", "Zawsze, gdy tylko prąd w sieci jest tani", "Gdy bateria jest już prawie całkiem pełna", "Gdy panele w południe produkują dużo prądu"],
+    why: "Sam tani prąd to za mało. Opłaca się dopiero wtedy, gdy zgromadzona energia zastąpi później zakup po 1,30 zł."
+  },
+  {
+    topic: "Instalacja",
+    q: "Ile mamy paneli i w którą stronę są skierowane?",
+    a: ["21 paneli, na wschód i zachód", "12 paneli, na południe", "30 paneli, na południe i zachód", "9 paneli, tylko na wschód"],
+    why: "9 paneli patrzy na wschód, 12 na zachód, razem ok. 9,6 kWp. Dzięki temu produkcja rozkłada się na cały dzień."
+  },
+  {
+    topic: "Instalacja",
+    q: "Jaką pojemność ma bateria domowa?",
+    a: ["Około 10 kWh", "Około 3 kWh", "Około 25 kWh", "Około 60 kWh, jak w aucie"],
+    why: "Bateria ma ok. 10 kWh. To mniej więcej tyle, ile dom zużywa przez pół zimowego dnia."
+  },
+  {
+    topic: "Instalacja",
+    q: "Poniżej ilu procent bateria normalnie nie schodzi?",
+    a: ["10 %", "0 %", "50 %", "30 %"],
+    why: "Falownik zostawia 10 % jako ochronę baterii. Ta część nie jest używana na co dzień."
+  },
+  {
+    topic: "Instalacja",
+    q: "Jaki bezpiecznik główny ma dom?",
+    a: ["3 × 25 A", "1 × 16 A", "3 × 63 A", "3 × 10 A"],
+    why: "Dom ma 3 × 25 A, a wniosek o 3 × 32 A jest złożony. Ładowanie auta musi się w tym zmieścić razem z resztą domu."
+  },
+  {
+    topic: "Instalacja",
+    q: "Na czym działa cała automatyka?",
+    a: ["Na małym komputerze Raspberry Pi w domu", "W chmurze internetowej producenta falownika", "Na telefonie komórkowym właściciela domu", "Wewnątrz ładowarki samochodowej w garażu"],
+    why: "Wszystkie automaty działają lokalnie na Raspberry Pi. Internet potrzebny jest tylko do prognozy pogody i ceny sprzedaży."
+  },
+  {
+    topic: "Bateria",
+    q: "Skąd skrypt wie, ile prądu dom zużyje następnego ranka?",
+    a: ["Z zużycia z ostatnich dni i prognozy temperatury", "Zgaduje losowo w zakresie od 5 do 15 kWh", "Z rachunku za prąd z tego samego dnia rok temu", "Pyta o to domowników w aplikacji wieczorem"],
+    why: "Bierze zużycie godzina po godzinie z ostatnich dwóch tygodni i poprawia je o prognozę temperatury. W zimne dni pompa ciepła zużywa więcej."
+  },
+  {
+    topic: "Bateria",
+    q: "W oknie skryptu bateria ma 80 %, a cel okna to 60 %. Co robi bateria?",
+    a: ["Pracuje normalnie i zasila dom", "Ładuje się z sieci do 100 %", "Stoi i nic nie robi", "Oddaje nadwyżkę do sieci"],
+    why: "Cel działa jak podłoga. Powyżej celu bateria pracuje normalnie, na celu stoi, poniżej celu falownik ją doładowuje."
+  },
+  {
+    topic: "Bateria",
+    q: "Co się dzieje o 06:01 w dzień roboczy, po nocnym oknie?",
+    a: ["Falownik wraca do zwykłej autokonsumpcji", "Bateria zaczyna ładować się z sieci", "Falownik wyłącza się do 13:00", "Dom przechodzi całkiem na prąd z sieci"],
+    why: "Skrypt zamyka okno i od tej chwili bateria zasila dom w drogich godzinach."
+  },
+  {
+    topic: "Bateria",
+    q: "Po co skrypt sprawdza zegar falownika, zanim ustawi okno?",
+    a: ["Bo przy złej godzinie okno trafi w drogą strefę", "Bo bez internetu falownik w ogóle nie działa", "Bo zegar falownika steruje ustawieniem paneli", "Bo tak każe instrukcja montażu falownika"],
+    why: "Okno jest ustawiane według zegara falownika. Gdy ten zegar rozjedzie się o ponad 5 minut, skrypt nic nie zmienia."
+  },
+  {
+    topic: "Bateria",
+    q: "Nie ma internetu i prognoza pogody się nie pobrała. Co robi skrypt?",
+    a: ["Używa ostatniej prognozy, do 36 godzin wstecz", "Ładuje baterię z sieci zawsze do 100 %", "Wyłącza baterię aż do czasu naprawy", "Pomija wszystkie decyzje aż do odwołania"],
+    why: "Skrypt zapamiętuje ostatnią prognozę i używa jej, gdy nowa się nie pobierze."
+  },
+  {
+    topic: "Weekend",
+    q: "Zimowy weekend, prognoza nie pokazuje nadwyżki prądu ze słońca. Co robi bateria?",
+    a: ["Ładuje się do 100 % i stoi pełna całą dobę", "Rozładowuje się normalnie jak w tygodniu", "Ładuje się tylko do 50 %", "Wyłącza się do poniedziałku"],
+    why: "Bez nadwyżki słońca nie trzeba zostawiać miejsca. Pełna bateria to największy zapas na awarię, a dom korzysta z taniej sieci."
+  },
+  {
+    topic: "Weekend",
+    q: "Dlaczego trzymana w weekend bateria nie zasila domu?",
+    a: ["Bo prąd jest tani, a bateria to zapas na awarię", "Bo w weekend falownik jest całkiem wyłączony", "Bo w weekend bateria w ogóle się nie ładuje", "Bo w weekend dom prawie nie zużywa prądu"],
+    why: "Zasilanie domu z baterii w weekend nic nie oszczędza, a zmniejsza zapas na wypadek awarii sieci."
+  },
+  {
+    topic: "Weekend",
+    q: "Sobota, słońce ma świecić do 15:00. Kiedy bateria dobierze prąd z sieci?",
+    a: ["Dopiero po ostatniej słonecznej godzinie", "Zaraz o 13:00, zanim wyjdzie słońce", "Wcale, aż do poniedziałku", "O północy, gdy jest najtaniej"],
+    why: "Dopóki świeci słońce, baterię ładuje nadwyżka z paneli. Z sieci dobiera dopiero potem, żeby wieczorem bufor był pełny."
+  },
+  {
+    topic: "Weekend",
+    q: "Dlaczego sobota zostawia miejsce w baterii, gdy niedziela ma być słoneczna?",
+    a: ["Żeby niedzielne słońce nie szło do sieci", "Bo w niedzielę prąd z sieci jest droższy", "Bo bateria raz w tygodniu musi odpocząć", "Bo w niedzielę falownik jest wyłączony"],
+    why: "Gdyby bateria była pełna w niedzielę rano, cała nadwyżka słońca poszłaby do sieci po niskiej cenie."
+  },
+  {
+    topic: "Weekend",
+    q: "Ile mniej więcej kosztuje weekendowy bufor na awarię?",
+    a: ["Około 50 groszy na weekend", "Około 20 zł na weekend", "Nic, zawsze jest darmowy", "Około 5 zł na weekend"],
+    why: "Test na czterech weekendach pokazał koszt ok. 0,50 zł na weekend, głównie przez straty przy ładowaniu."
+  },
+  {
+    topic: "Samochody",
+    q: "Chcesz zatrzymać ładowanie auta. Co robisz?",
+    a: ["Wybierasz tryb „Wyłączone” albo odłączasz auto", "Wyłączasz bezpiecznik główny domu", "Naciskasz przycisk na ładowarce trzy razy", "Wyłączasz falownik przyciskiem"],
+    why: "Tryb „Wyłączone” w Home Assistant albo odłączenie auta wystarczy. Po odłączeniu tryb i tak wróci do domyślnego."
+  },
+  {
+    topic: "Samochody",
+    q: "Po podłączeniu auta ładowarka rusza na kilka sekund i staje. Co to znaczy?",
+    a: ["To normalne: czeka na tanie godziny", "Ładowarka jest zepsuta", "Auto jest już w pełni naładowane", "Za chwilę wybije bezpiecznik"],
+    why: "Ładowarka startuje sama, zanim evcc zdąży ją zatrzymać. Potem czeka na tanią strefę albo nadwyżkę słońca."
+  },
+  {
+    topic: "Samochody",
+    q: "Słoneczne przedpołudnie, panele dają więcej, niż zużywa dom. Auto jest podłączone w trybie domyślnym. Co się dzieje?",
+    a: ["Auto ładuje się z nadwyżki słońca", "Auto czeka do 22:00", "Auto ładuje się z baterii domowej", "Nadwyżka zawsze idzie do sieci"],
+    why: "Tryb domyślny ładuje z sieci tylko tanio, ale z nadwyżki słońca o każdej porze."
+  },
+  {
+    topic: "Samochody",
+    q: "Ile mniej więcej kosztuje 100 km na prądzie z drogiej strefy w porównaniu z benzyną?",
+    a: ["Ok. 29 zł wobec ok. 42 zł na benzynie", "Tyle samo co na benzynie", "Dwa razy więcej niż na benzynie", "Ok. 5 zł wobec ok. 42 zł na benzynie"],
+    why: "Nawet drogi prąd jest tańszy od benzyny. Z taniej strefy to ok. 15 zł na 100 km."
+  },
+  {
+    topic: "Samochody",
+    q: "Naciskasz przycisk na ładowarce, a auto nie jest podłączone. Co się dzieje?",
+    a: ["Nic, tryb ładowania się nie zmienia", "Ładowarka włącza pełną moc", "Tryb „Szybko” czeka na auto do jutra", "Ładowarka się restartuje"],
+    why: "Przycisk działa tylko przy podłączonym aucie, żeby przypadkowe naciśnięcie niczego nie przestawiło."
+  },
+  {
+    topic: "Strażnik baterii",
+    q: "Co robi strażnik, gdy przejmuje falownik?",
+    a: ["Bateria oddaje tylko tyle, ile zużywa dom", "Wyłącza ładowarkę auta do rana", "Odłącza cały dom od sieci", "Ładuje baterię z sieci do 100 %"],
+    why: "Bateria nadal zasila dom, a auto bierze prąd prosto z sieci. Nadwyżka słońca nadal może ładować baterię."
+  },
+  {
+    topic: "Strażnik baterii",
+    q: "Kiedy strażnik oddaje baterię z powrotem?",
+    a: ["Gdy auto skończy albo zacznie się droga strefa", "Dopiero następnego dnia rano o 06:00", "Gdy bateria domowa spadnie do 10 %", "Nigdy, trzyma ją aż do restartu Pi"],
+    why: "Oddaje też wtedy, gdy evcc przez 5 minut nie odpowiada. Falownik wraca wtedy do zwykłej pracy."
+  },
+  {
+    topic: "Strażnik baterii",
+    q: "Co się stanie, jeśli strażnik się zawiesi?",
+    a: ["Falownik po 10 minutach sam wróci do normy", "Bateria zostanie zablokowana na zawsze", "Dom straci zasilanie do naprawy", "Auto zacznie oddawać prąd do domu"],
+    why: "Strażnik ustawia w falowniku limit czasu. Jeśli go nie odnowi, falownik po 10 minutach wraca do poprzedniego trybu."
+  },
+  {
+    topic: "Strażnik baterii",
+    q: "Dlaczego strażnik nie wtrąca się w oknach skryptu baterii?",
+    a: ["W oknie bateria oddaje tylko to, co ponad cel", "W oknie auto w ogóle nie może się ładować", "W nocy strażnik jest zawsze wyłączony", "Okna skryptu są tylko w weekendy"],
+    why: "Cel okna to poziom, którego dom potrzebuje. Energię ponad cel dom zużyłby sam, więc może ją wziąć także auto."
+  },
+  {
+    topic: "Ciepła woda",
+    q: "Kiedy w dzień roboczy pompa dogrzewa wodę na popołudniowe prysznice?",
+    a: ["W tanim oknie 13:00–15:00", "O 06:00 rano, przed pracą", "O 20:00, w drogiej strefie", "Tylko w weekendy, gdy jest tanio"],
+    why: "W tanim oknie nastawa rośnie do 54 °C, a pompa startuje już przy 52 °C."
+  },
+  {
+    topic: "Ciepła woda",
+    q: "Co oznacza histereza w ustawieniach ciepłej wody?",
+    a: ["O ile woda ostygnie, zanim pompa ją podgrzeje", "Najwyższą temperaturę wody w zbiorniku", "Czas, przez który pompa grzeje wodę", "Moc grzałki elektrycznej w zbiorniku"],
+    why: "Na przykład nastawa 50 °C i histereza −5 K: pompa startuje, gdy woda spadnie poniżej 45 °C."
+  },
+  {
+    topic: "Ciepła woda",
+    q: "Jaka jest nastawa ciepłej wody w weekend?",
+    a: ["52 °C przez całą dobę", "54 °C tylko w południe", "40 °C, żeby oszczędzać", "60 °C przez całą dobę"],
+    why: "W weekend cała doba jest tania, więc nastawa jest stała."
+  },
+  {
+    topic: "Ciepła woda",
+    q: "Czy automatyka steruje ogrzewaniem domu?",
+    a: ["Nie, ogrzewaniem steruje termostat ścienny", "Tak, ustawia temperaturę w każdym pokoju", "Tak, wyłącza ogrzewanie w drogiej strefie", "Tak, grzeje dom tylko w nocy"],
+    why: "Automatyka zmienia tylko ustawienia ciepłej wody. Ogrzewanie działa według termostatu."
+  },
+  {
+    topic: "Ciepła woda",
+    q: "Co robi harmonogram ciepłej wody, gdy moduł HeishaMon nie odpowiada?",
+    a: ["Nie wysyła do pompy żadnych zmian", "Wyłącza pompę ciepła", "Ustawia wodę na 65 °C", "Przełącza dom na grzałkę elektryczną"],
+    why: "Bez kontaktu z pompą harmonogram czeka. Pompa pracuje dalej z ostatnią nastawą."
+  },
+  {
+    topic: "Gdy coś nie działa",
+    q: "Około 03:00 na chwilę znika połączenie z pompą ciepła. Co to oznacza?",
+    a: ["Nic groźnego, to restart routera", "Pompa ciepła zaczyna się psuć", "Ktoś wyłączył w nocy prąd w domu", "Bateria domowa jest już pusta"],
+    why: "Router restartuje się codziennie o 03:00. Połączenie wraca po kilku sekundach."
+  },
+  {
+    topic: "Gdy coś nie działa",
+    q: "W nocy bateria stoi na stałym poziomie, a dom bierze prąd z sieci. Czy to awaria?",
+    a: ["Nie, trwa okno taniego prądu", "Tak, bateria jest zepsuta", "Tak, falownik się zawiesił", "Nie, to znak, że bateria jest pusta"],
+    why: "Skrypt trzyma baterię na drogi poranek, a dom w nocy kupuje tani prąd."
+  },
+  {
+    topic: "Gdy coś nie działa",
+    q: "Bateria spadła poniżej 8 % i na chwilę ładuje się z sieci. Dlaczego?",
+    a: ["To zabezpieczenie wbudowane w falownik", "Skrypt baterii pomylił strefy taryfy", "Auto oddaje prąd do baterii domowej", "To oznaka poważnej awarii baterii"],
+    why: "Falownik sam pilnuje, żeby bateria nie rozładowała się zbyt głęboko. Nie robi tego automatyka."
+  },
+  {
+    topic: "Gdy coś nie działa",
+    q: "Auto podłączone na noc nie naładowało się do rana. Co robisz?",
+    a: ["Dajesz znać administratorowi", "Odłączasz panele słoneczne", "Wyłączasz pompę ciepła", "Nic, tak ma być"],
+    why: "W trybie domyślnym auto ładuje się od 22:00. Jeśli rano jest puste, coś jest nie tak."
   }
 ];
 
-const BEST_KEY = "quiz-energia-best";
+const BEST_KEY = "quiz-energia-best-10";
 const $ = id => document.getElementById(id);
 let order = [], index = 0, points = 0, missed = [];
 
@@ -299,8 +527,17 @@ function shuffle(list) {
   return a;
 }
 
+// 10 of the 60 questions per attempt, a fixed number from each topic so none is left out
+const QUOTA = { "Taryfa": 1, "Instalacja": 1, "Bateria": 2, "Weekend": 1, "Samochody": 2,
+                "Strażnik baterii": 1, "Ciepła woda": 1, "Gdy coś nie działa": 1 };
+
 function start() {
-  order = shuffle(QUESTIONS.map((_, i) => i));
+  const picked = [];
+  for (const [topic, n] of Object.entries(QUOTA)) {
+    const ids = QUESTIONS.map((q, i) => i).filter(i => QUESTIONS[i].topic === topic);
+    picked.push(...shuffle(ids).slice(0, n));
+  }
+  order = shuffle(picked);
   index = 0; points = 0; missed = [];
   $("result").hidden = true;
   $("quiz").hidden = false;
