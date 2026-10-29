@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiz: energia w domu</title>
+<meta name="description" content="Sprawdź, czy wiesz, jak działa automatyka energii w domu: taryfa G12w, bateria, ładowanie aut, ciepła woda.">
+<style>
+  :root {
+    --bg: #f6f5f2;
+    --card: #ffffff;
+    --ink: #1f1e1c;
+    --quiet: #66625b;
+    --line: #dcd8d0;
+    --accent: #2563eb;
+    --accent-ink: #ffffff;
+    --good: #15803d;
+    --good-bg: #e7f5ec;
+    --bad: #b91c1c;
+    --bad-bg: #fbeaea;
+    --note-bg: #f1f0ec;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #151514;
+      --card: #1f1f1d;
+      --ink: #ecebe7;
+      --quiet: #a8a49c;
+      --line: #3a3935;
+      --accent: #5b8def;
+      --accent-ink: #0b1220;
+      --good: #4ade80;
+      --good-bg: #16301f;
+      --bad: #f87171;
+      --bad-bg: #3a1d1d;
+      --note-bg: #282825;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    min-height: 100vh;
+    padding: 24px 16px 48px;
+  }
+  main { max-width: 640px; margin: 0 auto; }
+  header { margin-bottom: 20px; }
+  h1 { font-size: 1.5rem; line-height: 1.25; margin: 0 0 6px; }
+  .lead { color: var(--quiet); margin: 0; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .meta { display: flex; justify-content: space-between; color: var(--quiet); font-size: 0.875rem; margin-bottom: 8px; }
+  .bar { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; margin-bottom: 20px; }
+  .bar > span { display: block; height: 100%; background: var(--accent); width: 0; transition: width 0.25s; }
+  .topic { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--quiet); margin-bottom: 6px; }
+  h2 { font-size: 1.15rem; line-height: 1.4; margin: 0 0 16px; }
+  .options { display: grid; gap: 10px; }
+  .opt {
+    text-align: left;
+    font: inherit;
+    color: var(--ink);
+    background: var(--card);
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    cursor: pointer;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .opt:hover:not(:disabled) { border-color: var(--accent); }
+  .opt:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .opt:disabled { cursor: default; }
+  .opt .key {
+    flex: none;
+    width: 1.6em; height: 1.6em;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; color: var(--quiet);
+  }
+  .opt.correct { border-color: var(--good); background: var(--good-bg); }
+  .opt.wrong { border-color: var(--bad); background: var(--bad-bg); }
+  .explain {
+    margin-top: 16px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: var(--note-bg);
+    display: none;
+  }
+  .explain.show { display: block; }
+  .explain strong.ok { color: var(--good); }
+  .explain strong.no { color: var(--bad); }
+  .actions { margin-top: 18px; display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
+  .btn {
+    font: inherit;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 18px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    cursor: pointer;
+  }
+  .btn.secondary { background: transparent; color: var(--ink); border: 1.5px solid var(--line); }
+  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .btn[hidden] { display: none; }
+  .score { font-size: 2.5rem; font-weight: 700; margin: 4px 0; }
+  .verdict { color: var(--quiet); margin: 0 0 16px; }
+  .review { margin-top: 8px; padding: 0; list-style: none; display: grid; gap: 10px; }
+  .review li { border-left: 3px solid var(--bad); padding: 6px 0 6px 12px; }
+  .review .q { font-weight: 600; }
+  .review .a { color: var(--quiet); font-size: 0.95rem; }
+  .best { color: var(--quiet); font-size: 0.875rem; margin-top: 12px; }
+  footer { color: var(--quiet); font-size: 0.8rem; margin-top: 20px; text-align: center; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Quiz: energia w domu</h1>
+    <p class="lead">Taryfa, bateria, samochody i ciepła woda. Sprawdź, czy wiesz, co robi automatyka i dlaczego.</p>
+  </header>
+
+  <section class="card" id="quiz" aria-live="polite">
+    <div class="meta"><span id="counter"></span><span id="points"></span></div>
+    <div class="bar" aria-hidden="true"><span id="progress"></span></div>
+    <div class="topic" id="topic"></div>
+    <h2 id="question"></h2>
+    <div class="options" id="options"></div>
+    <div class="explain" id="explain"></div>
+    <div class="actions"><button class="btn" id="next" hidden>Dalej</button></div>
+  </section>
+
+  <section class="card" id="result" hidden>
+    <div class="topic">Wynik</div>
+    <div class="score" id="score"></div>
+    <p class="verdict" id="verdict"></p>
+    <div id="missed"></div>
+    <p class="best" id="best"></p>
+    <div class="actions"><button class="btn" id="again">Jeszcze raz</button></div>
+  </section>
+
+  <footer>Odpowiedzi wyjaśnia dokument „Jak działa automatyka energii w domu”.</footer>
+</main>
+
+<script>
+const QUESTIONS = [
+  {
+    topic: "Taryfa",
+    q: "W które godziny w dzień roboczy prąd jest tani?",
+    a: ["22:00–06:00 i 13:00–15:00", "06:00–13:00 i 15:00–22:00", "Tylko w nocy, 22:00–06:00", "13:00–22:00"],
+    why: "Taryfa G12w ma w dni robocze dwa tanie okna: nocne 22–06 i południowe 13–15. Weekendy i święta są tanie przez całą dobę."
+  },
+  {
+    topic: "Taryfa",
+    q: "Ile mniej więcej kosztuje kilowatogodzina w drogiej strefie w porównaniu z tanią?",
+    a: ["Około dwa razy więcej", "Tyle samo", "Około 10 % więcej", "Około pięć razy więcej"],
+    why: "Droga strefa to ok. 1,30 zł za kWh, tania ok. 0,66 zł. Ta różnica napędza prawie wszystkie decyzje automatyki."
+  },
+  {
+    topic: "Taryfa",
+    q: "Dlaczego sprzedaż nadwyżki prądu do sieci to najsłabsza opcja?",
+    a: ["Sprzedajemy po ok. 0,43 zł, a kupujemy po 0,66–1,30 zł", "Sprzedaż jest możliwa tylko w weekendy i święta", "Za sprzedany prąd płacimy dodatkową opłatę dystrybucyjną", "Sprzedaż zużywa baterię szybciej niż zwykła praca"],
+    why: "Za sprzedaną kilowatogodzinę dostajemy cenę rynkową (ok. 0,43 zł), a każdą kupioną płacimy dużo drożej. Lepiej zużyć albo zmagazynować prąd ze słońca."
+  },
+  {
+    topic: "Instalacja",
+    q: "Falownik „celuje w zero na liczniku”. Co to znaczy?",
+    a: ["Zasila dom słońcem i baterią tak, żeby z sieci brać tylko brakującą resztę", "Wyłącza zasilanie domu w drogich godzinach, żeby licznik stał", "Sprzedaje do sieci wszystko, co wyprodukują panele", "Rozładowuje baterię do zera przed każdym tanim oknem"],
+    why: "Falownik na bieżąco dobiera moc z paneli i baterii tak, żeby licznik sieci stał w miejscu. Z sieci płynie tylko to, czego zabraknie."
+  },
+  {
+    topic: "Instalacja",
+    q: "Dlaczego ładowane auto mogłoby opróżnić baterię domową?",
+    a: ["Falownik widzi ładowarki jak zwykły pobór domu", "Auto i dom mają wspólną baterię podłączoną do falownika", "Ładowarki są ustawione tak, żeby brać prąd wyłącznie z baterii", "Auto oddaje energię do domu, a potem dobiera ją z baterii domowej"],
+    why: "Falownik nie odróżnia auta od czajnika. Widzi pobór i próbuje go pokryć z baterii, dlatego potrzebny jest strażnik baterii."
+  },
+  {
+    topic: "Bateria",
+    q: "Kiedy w dzień roboczy skrypt baterii decyduje, czy doładować baterię z sieci?",
+    a: ["O 12:50 i o 21:50, tuż przed tanimi oknami", "Co godzinę, przez całą dobę", "Raz dziennie o północy, na cały kolejny dzień", "Tylko wtedy, gdy bateria spadnie poniżej 10 %"],
+    why: "O 12:50 planuje okno 13–15 (na popołudnie i wieczór), a o 21:50 okno nocne 22–06 (na drogi ranek)."
+  },
+  {
+    topic: "Bateria",
+    q: "Skrypt zdecydował „Trzymaj” w oknie nocnym. Co się dzieje?",
+    a: ["Bateria stoi, a dom bierze w nocy tani prąd z sieci", "Bateria ładuje się z sieci pełną mocą do 100 %", "Bateria normalnie zasila dom przez całą noc", "Bateria oddaje nadwyżkę energii do sieci"],
+    why: "Energia zostaje w baterii na drogi poranek. W nocy dom kupuje prąd po taniej stawce, a rano zużywa to, co zostało w baterii."
+  },
+  {
+    topic: "Bateria",
+    q: "Dlaczego skrypt planuje trochę więcej energii, niż wynika z prognozy?",
+    a: ["Brak kosztuje 1,30 zł/kWh, nadmiar najwyżej grosze", "Bo pełna bateria wolniej się zużywa i dłużej wytrzyma", "Bo prognoza pogody zawsze zaniża produkcję paneli", "Bo tak wymaga operator sieci przy taryfie G12w"],
+    why: "Pomyłka w dół jest droższa niż pomyłka w górę. Dlatego skrypt dolicza 20 % i 0,5 kWh zapasu."
+  },
+  {
+    topic: "Bateria",
+    q: "Do ilu procent skrypt ładuje baterię od listopada do lutego?",
+    a: ["Do 100 %, chyba że słońce i tak by ją zapełniło", "Do 50 %, żeby zostawić miejsce na słońce", "Wcale, zimą ładowanie z sieci jest wyłączone", "Do 80 %, żeby oszczędzać baterię"],
+    why: "Zimą słońca jest mało, a dom zużywa dużo, więc każda kWh naładowana tanio i tak się przyda."
+  },
+  {
+    topic: "Weekend",
+    q: "Sobota, prognoza: ok. 2 kWh więcej prądu ze słońca, niż dom zużyje. Co robi skrypt?",
+    a: ["Ładuje z sieci, zostawiając ok. 2,3 kWh miejsca na słońce", "Ładuje baterię z sieci do 100 %, na wszelki wypadek", "Nie ładuje z sieci wcale, czeka tylko na słońce", "Rozładowuje baterię rano, żeby sprzedać 2 kWh"],
+    why: "W weekend bateria ma być buforem na awarię, ale nie kosztem słońca. Lepiej bufor 90 % niż pełna bateria i prąd ze słońca sprzedany za bezcen."
+  },
+  {
+    topic: "Weekend",
+    q: "Jaki jest główny cel baterii w weekend, gdy cała doba jest tania?",
+    a: ["Zapas energii na wypadek awarii sieci", "Zarabianie na sprzedaży prądu do sieci", "Ładowanie auta w nocy, zanim dom się obudzi", "Żaden, w weekend bateria jest wyłączona"],
+    why: "W weekend nie da się zaoszczędzić na różnicy cen, bo jest tylko tania stawka. Bateria trzyma wtedy zapas, który kosztuje ok. 50 groszy na weekend."
+  },
+  {
+    topic: "Bateria",
+    q: "Prognoza zapowiada wichurę albo burzę. Co robi bateria?",
+    a: ["Ładuje się do 100 % i trzyma ten poziom", "Rozładowuje się, żeby zrobić miejsce na prąd z wiatru", "Nic się nie zmienia, decyduje tylko cena prądu", "Wyłącza się na czas burzy, żeby jej nie uszkodzić"],
+    why: "Przy ryzyku awarii sieci pełna bateria jest najważniejsza, niezależnie od dnia tygodnia i ceny."
+  },
+  {
+    topic: "Samochody",
+    q: "Środa, 18:00, podłączasz auto. Ładowarka jest w trybie domyślnym. Co się stanie?",
+    a: ["Auto poczeka do 22:00, chyba że jest nadwyżka prądu ze słońca", "Auto od razu ładuje się pełną mocą, bo jest puste", "Auto nie naładuje się, dopóki nie naciśniesz przycisku", "Auto ładuje się z baterii domowej, aż ją wyczerpie"],
+    why: "Tryb domyślny ładuje z sieci tylko w taniej strefie, a ze słońca o każdej porze. Wieczorem w dzień roboczy jest drogo, więc auto czeka do 22:00."
+  },
+  {
+    topic: "Samochody",
+    q: "Wracasz o 15:00 z pustym autem, a o 20:00 znowu jedziesz. Co robisz?",
+    a: ["Naciskasz przycisk na ładowarce: auto ładuje się od razu", "Nic, w trybie domyślnym auto i tak naładuje się do 20:00", "Czekasz do 22:00, bo wtedy prąd jest najtańszy", "Wybierasz tryb „Wyłączone”, żeby zresetować ładowarkę"],
+    why: "Przycisk przełącza na „Szybko”. Prąd w drogiej strefie (ok. 29 zł na 100 km) i tak jest tańszy od benzyny (ok. 42 zł na 100 km)."
+  },
+  {
+    topic: "Samochody",
+    q: "Ładowanie było w trybie „Szybko”. Co się dzieje po odłączeniu auta?",
+    a: ["Tryb sam wraca do „tylko tanio”", "Zostaje „Szybko”, aż ktoś przełączy go ręcznie", "Ładowarka wyłącza się do następnego dnia", "Ładowarka przechodzi w tryb „Wyłączone”"],
+    why: "Dzięki temu „Szybko” nigdy nie zostaje przez przypadek na kolejne ładowanie."
+  },
+  {
+    topic: "Samochody",
+    q: "W trakcie ładowania auta włącza się zmywarka i prąd na fazie przekracza 22 A. Co się dzieje?",
+    a: ["evcc w ciągu 10–20 s zmniejsza prąd ładowania auta o nadwyżkę", "Od razu wybija bezpiecznik i trzeba go włączyć ręcznie", "Zmywarka sama się wyłącza, bo ma niższy priorytet", "Nic, bezpiecznik 25 A wytrzyma taki prąd bez końca"],
+    why: "Bezpiecznik ma 25 A. evcc pilnuje zapasu i obniża ładowanie, zanim bezpiecznik zdąży zadziałać."
+  },
+  {
+    topic: "Strażnik baterii",
+    q: "Kiedy działa strażnik baterii?",
+    a: ["Tylko w taniej strefie, gdy auto się ładuje", "Zawsze, gdy auto się ładuje, o każdej porze", "Tylko w drogiej strefie, gdy prąd jest drogi", "Tylko w weekendy, gdy bateria jest buforem"],
+    why: "W taniej strefie bateria trzyma energię na drogie godziny albo na awarię. Wtedy strażnik każe autu brać prąd z sieci."
+  },
+  {
+    topic: "Strażnik baterii",
+    q: "Dlaczego w drogiej strefie auto może brać prąd z baterii?",
+    a: ["Bo i tak kupilibyśmy brakującą energię po tej samej, drogiej cenie", "Bo w drogiej strefie bateria jest zawsze pełna", "Bo w dzień strażnik nie widzi ładowanego auta", "Bo auto ma pierwszeństwo przed domem przez całą dobę"],
+    why: "Gdy auto zużyje baterię wieczorem, dom dokupi brak po 1,30 zł. Bez auta dom kupiłby wtedy tyle samo, więc koszt się nie zmienia, a niewykorzystana energia z baterii byłaby warta mniej po 22:00."
+  },
+  {
+    topic: "Ciepła woda",
+    q: "Dlaczego w dzień roboczy między 06:00 a 13:00 pompa prawie nie podgrzewa wody?",
+    a: ["Bo jest drogo: pompa grzeje dopiero poniżej 40 °C", "Bo falownik odłącza wtedy pompę od prądu", "Bo rano woda w zbiorniku w ogóle nie stygnie", "Bo rano wodę podgrzewa za nią grzałka elektryczna"],
+    why: "Rano woda może powoli stygnąć. Dogrzanie przychodzi w tanim oknie 13–15, przed popołudniowymi prysznicami."
+  },
+  {
+    topic: "Ciepła woda",
+    q: "Dlaczego nastawa ciepłej wody nie przekracza 54 °C?",
+    a: ["Bo wyżej włącza się droga grzałka elektryczna 3 kW", "Bo woda powyżej 54 °C jest niezgodna z przepisami", "Bo zbiornik nie wytrzymuje wyższej temperatury", "Bo pompa nie potrafi grzać wody powyżej 54 °C"],
+    why: "Sprężarka pompy grzeje ok. 3 razy taniej niż grzałka. Wyższa nastawa kończyła się dogrzewaniem grzałką."
+  },
+  {
+    topic: "Gdy coś nie działa",
+    q: "Na ekranie Start w Home Assistant pojawiła się sekcja „Do sprawdzenia”. Co robisz?",
+    a: ["Dajesz znać administratorowi", "Wyłączasz bezpiecznik główny i czekasz", "Nic, to zwykłe przypomnienie o aktualizacji", "Restartujesz falownik przyciskiem na obudowie"],
+    why: "Ta sekcja pojawia się tylko wtedy, gdy automatyka wykryje problem, np. brak danych z falownika albo pompy."
+  },
+  {
+    topic: "Gdy coś nie działa",
+    q: "Komputer sterujący przestał działać. Na co trzeba uważać do czasu naprawy?",
+    a: ["Nie włączać naraz ładowania auta i dużych odbiorników", "Nie otwierać lodówki, żeby nie zużywać prądu", "Nie korzystać z ciepłej wody do rana", "Na nic, wszystko działa dokładnie jak zwykle"],
+    why: "Dom ma prąd jak zwykle, ale nikt nie pilnuje bezpiecznika przy ładowaniu auta. Ładowanie razem z piekarnikiem czy czajnikiem może go wybić."
+  }
+];
+
+const BEST_KEY = "quiz-energia-best";
+const $ = id => document.getElementById(id);
+let order = [], index = 0, points = 0, missed = [];
+
+function shuffle(list) {
+  const a = list.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function start() {
+  order = shuffle(QUESTIONS.map((_, i) => i));
+  index = 0; points = 0; missed = [];
+  $("result").hidden = true;
+  $("quiz").hidden = false;
+  show();
+}
+
+function show() {
+  const item = QUESTIONS[order[index]];
+  $("counter").textContent = `Pytanie ${index + 1} z ${order.length}`;
+  $("points").textContent = `Punkty: ${points}`;
+  $("progress").style.width = `${(index / order.length) * 100}%`;
+  $("topic").textContent = item.topic;
+  $("question").textContent = item.q;
+  $("explain").className = "explain";
+  $("explain").innerHTML = "";
+  $("next").hidden = true;
+  const box = $("options");
+  box.innerHTML = "";
+  // a[0] is the right answer; the options are shown in random order
+  shuffle(item.a.map((text, i) => ({ text, right: i === 0 }))).forEach((opt, i) => {
+    const b = document.createElement("button");
+    b.className = "opt";
+    b.type = "button";
+    b.dataset.right = opt.right ? "1" : "";
+    b.innerHTML = `<span class="key">${"ABCD"[i]}</span><span></span>`;
+    b.lastChild.textContent = opt.text;
+    b.addEventListener("click", () => answer(b, item));
+    box.appendChild(b);
+  });
+  box.firstChild.focus({ preventScroll: true });
+}
+
+function answer(chosen, item) {
+  const buttons = [...$("options").children];
+  const right = chosen.dataset.right === "1";
+  buttons.forEach(b => {
+    b.disabled = true;
+    if (b.dataset.right) b.classList.add("correct");
+  });
+  if (right) points++;
+  else {
+    chosen.classList.add("wrong");
+    missed.push(item);
+  }
+  $("points").textContent = `Punkty: ${points}`;
+  const ex = $("explain");
+  ex.innerHTML = right ? '<strong class="ok">Dobrze.</strong> ' : '<strong class="no">Nie tym razem.</strong> ';
+  ex.appendChild(document.createTextNode(item.why));
+  ex.classList.add("show");
+  const next = $("next");
+  next.textContent = index + 1 < order.length ? "Dalej" : "Zobacz wynik";
+  next.hidden = false;
+  next.focus({ preventScroll: true });
+}
+
+function finish() {
+  $("quiz").hidden = true;
+  $("result").hidden = false;
+  const total = order.length;
+  const share = points / total;
+  $("score").textContent = `${points} / ${total}`;
+  $("verdict").textContent =
+    share === 1 ? "Komplet. Znasz automatykę lepiej niż ona sama." :
+    share >= 0.8 ? "Bardzo dobrze. Kilka szczegółów do odświeżenia poniżej." :
+    share >= 0.5 ? "Nieźle. Przejrzyj pytania, które sprawiły kłopot." :
+    "Warto jeszcze raz przeczytać dokument. Poniżej poprawne odpowiedzi.";
+  const box = $("missed");
+  box.innerHTML = "";
+  if (missed.length) {
+    const ul = document.createElement("ul");
+    ul.className = "review";
+    missed.forEach(item => {
+      const li = document.createElement("li");
+      li.innerHTML = '<div class="q"></div><div class="a"></div>';
+      li.firstChild.textContent = item.q;
+      li.lastChild.textContent = "Poprawnie: " + item.a[0];
+      ul.appendChild(li);
+    });
+    box.appendChild(ul);
+  }
+  let best = 0;
+  try { best = Number(localStorage.getItem(BEST_KEY)) || 0; } catch (e) {}
+  if (points > best) {
+    best = points;
+    try { localStorage.setItem(BEST_KEY, String(points)); } catch (e) {}
+  }
+  $("best").textContent = `Twój najlepszy wynik na tym urządzeniu: ${best} / ${total}`;
+  $("again").focus({ preventScroll: true });
+}
+
+$("next").addEventListener("click", () => {
+  index++;
+  if (index < order.length) show(); else finish();
+});
+$("again").addEventListener("click", start);
+document.addEventListener("keydown", e => {
+  if ($("quiz").hidden) return;
+  const k = e.key.toUpperCase();
+  const i = "ABCD".indexOf(k);
+  const opts = [...$("options").children];
+  if (i >= 0 && opts[i] && !opts[i].disabled) opts[i].click();
+  else if (k === "ENTER" && !$("next").hidden && document.activeElement !== $("next")) $("next").click();
+});
+start();
+</script>
+</body>
+</html>
